@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Scraping Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #trend-data {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Selenium Scraping Dashboard</h1>
+
+    <!-- Button to trigger the scraping process -->
+    <button id="scrape-button">Run Scraping</button>
+
+    <div id="trend-data">
+        <h2>Latest Trends</h2>
+        <pre id="trend-info">Loading data...</pre>
+    </div>
+
+    <script>
+        // Function to fetch the latest trends data from the server
+        async function getTrends() {
+            try {
+                const response = await fetch('/get-trends');
+                const data = await response.json();
+                const trendInfo = document.getElementById('trend-info');
+                
+                if (Object.keys(data).length === 0) {
+                    trendInfo.textContent = 'No trends data available.';
+                } else {
+                    trendInfo.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                console.error('Error fetching trends:', error);
+                document.getElementById('trend-info').textContent = 'Error fetching trends.';
+            }
+        }
+
+        // Function to trigger the scraping process
+        async function runScraping() {
+            try {
+                const response = await fetch('/run-scraping');
+                const message = await response.text();
+                alert(message);
+                getTrends();  // Fetch the latest trends after scraping
+            } catch (error) {
+                console.error('Error running scraping:', error);
+                alert('Error running scraping.');
+            }
+        }
+
+        // Add event listener to the scraping button
+        document.getElementById('scrape-button').addEventListener('click', runScraping);
+
+        // Fetch trends data when the page loads
+        getTrends();
+    </script>
+
+</body>
+</html>
